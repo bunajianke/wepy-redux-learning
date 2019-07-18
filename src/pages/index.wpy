@@ -40,6 +40,7 @@
       <view class="title" slot="title">其它测试</view>
       <button @tap="toast" size="mini">第三方组件</button>
       <button @tap="communicate" size="mini">组件通信</button>
+      <button @tap="increment" size="mini">increment</button>
       <button @tap="tap" size="mini">混合TAP事件</button>
     </panel>
 
@@ -66,6 +67,8 @@
 
     <panel>
       <view class="title" slot="title">测试组件Repeat</view>
+      <button @tap="add">add list item</button>
+      <text wx:for-items="{{myList}}" wx:for-item="item" wx:for-index="index">{{ item.title }}~{{ item.text }}</text>
       <repeat for="" index="index" item="item" key="key">
         <group :grouplist="item" :indexa="index"></group>
       </repeat>
@@ -75,7 +78,6 @@
       <view class="title" slot="title">测试列表</view>
       <list></list>
     </panel>
-
     <toast />
   </view>
 </template>
@@ -102,6 +104,9 @@
     },
     sumNum (state) {
       return state.counter.num + state.counter.asyncNum
+    },
+    myList(state) {
+      return state.list
     }
   })
 
@@ -223,6 +228,15 @@
       counterEmit (...args) {
         let $event = args[args.length - 1]
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      },
+      add() {
+        wepy.$store.dispatch({
+          type: 'ADD',
+          payload: {
+            title: 'test add',
+            text: 'test add test'
+          }
+        })
       }
     }
 
@@ -235,6 +249,7 @@
 
     onLoad() {
       let self = this
+      console.log(wepy.$store.getState())
       this.$parent.getUserInfo(function (userInfo) {
         if (userInfo) {
           self.userInfo = userInfo
